@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>API Requests with User Input</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1>API Requests</h1>
+    <div>
+        <label for="nameInput">Введите имя для определения национальности:</label>
+        <input type="text" id="nameInput" name="nameInput">
+        <button onclick="fetchNationality()">Определить национальность</button>
+    </div>
+    <div id="output">
+        <div id="catFact">
+            <p>Cat Fact: <span id="catFactText"></span></p>
+            <button onclick="getCatFact()">Обновить факт о котах</button>
+        </div>
+        <div id="dogImage">
+            <p>Random Dog Image: <img id="dogImageElement" src="" alt="Random Dog"></p>
+            <button onclick="getRandomDogImage()">Обновить изображение собаки</button>
+        </div>
+    </div>
+
+    <script>
+        // Функция для запроса фактов о кошках
+        async function getCatFact() {
+            try {
+                const response = await axios.get('https://catfact.ninja/fact');
+                document.getElementById('catFactText').textContent = response.data.fact;
+            } catch (error) {
+                console.error('Error fetching cat fact:', error);
+            }
+        }
+
+        // Функция для определения национальности по имени
+        async function getNationality(name) {
+            try {
+                const response = await axios.get(`https://api.nationalize.io/?name=${name}`);
+                document.getElementById('output').innerHTML += `<p>Nationality for ${name}: ${response.data.country[0].country_id}</p>`;
+            } catch (error) {
+                console.error('Error fetching nationality:', error);
+            }
+        }
+
+        // Функция для получения случайного изображения собаки
+        async function getRandomDogImage() {
+            try {
+                const response = await axios.get('https://dog.ceo/api/breeds/image/random');
+                document.getElementById('dogImageElement').src = response.data.message;
+            } catch (error) {
+                console.error('Error fetching dog image:', error);
+            }
+        }
+
+        // Функция для обработки кнопки "Определить национальность"
+        async function fetchNationality() {
+            const name = document.getElementById('nameInput').value;
+            if (name) {
+                getNationality(name);
+            } else {
+                alert('Пожалуйста, введите имя.');
+            }
+        }
+
+        // Вызов функций
+        getCatFact();
+        getRandomDogImage();
+    </script>
+</body>
+</html>
